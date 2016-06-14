@@ -1,6 +1,8 @@
 package app.com.ttins.newsfeed.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,6 +82,9 @@ public class StoryAdapter extends ArrayAdapter<Story> {
             @Override
             public void onClick(View v) {
                 Log.d(LOG_TAG, "Link: " + viewHolder.link);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(viewHolder.link));
+                context.startActivity(intent);
             }
         });
 
