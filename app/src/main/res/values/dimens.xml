@@ -1,0 +1,33 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="app_bar_elevation">4dp</dimen>
+
+    <!-- Feed List -->
+    <dimen name="feed_list_item_height">80dp</dimen>
+
+    <!-- Story List -->
+    <dimen name="story_list_item_height">80dp</dimen>
+
+    <!-- AppBar Dimensions -->
+    <dimen name="app_bar_height">150dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="news_title_item_text_size">20sp</dimen>
+    <dimen name="news_authors_item_text_size">12sp</dimen>
+
+    <!-- Text Margins -->
+    <dimen name="news_title_item_margin">8dp</dimen>
+    <dimen name="news_authors_item_margin">4dp</dimen>
+
+    <!-- Http connection values -->
+    <integer name="http_read_timeout">10000</integer>
+    <integer name="http_connect_timeout">15000</integer>
+
+    <!-- FAB -->
+    <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="fab_press_translation_z">12dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+</resources>

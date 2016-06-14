@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">NewsFeed</string>
+    <string name="http_find_feed_query_address">https://ajax.googleapis.com/ajax/services/feed/find?v=1.0&amp;q=</string>
+    <string name="http_load_feed_query_address">https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&amp;q=</string>
+    <string name="query_max_results_key">&amp;maxResults=</string>
+    <string name="fields_projection_key">&amp;fields=</string>
+    <string name="key_argument_key">&amp;key=</string>
+    <string name="query_projection_key">&amp;projection=</string>
+    <string name="projection_lite_key">lite</string>
+    <string name="items_projection_key">items</string>
+    <string name="title_projection_key">title</string>
+    <string name="authors_projection_key">authors</string>
+
+    <!-- Story Intent -->
+    <string name="INTENT_ACTION_STORY_LIST">app.com.ttins.newsfeed.STORY_LIST</string>
+
+    <!-- News Topic -->
+    <string name="news_topic_query">comics</string>
+
+    <!-- TOAST ERROR MESSAGES -->
+    <string name="http_url_not_found_message">Service unavailable</string>
+    <string name="http_generic_error_message">Service error</string>
+    <string name="network_unavailable_message">Network unavailable. Please check the internet connectivity</string>
+
+    <!-- Json Feed Reply -->
+    <string name="json_feed_response_data_key">responseData</string>
+    <string name="json_feed_entries_key">entries</string>
+    <string name="json_feed_url_key">url</string>
+    <string name="json_feed_title_key">title</string>
+    <string name="json_feed_content_snippet_key">contentSnippet</string>
+    <string name="json_feed_link_key">link</string>
+
+    <!-- Json Feed Stories Reply -->
+    <string name="json_stories_response_data_key">responseData</string>
+    <string name="json_stories_feed_key">feed</string>
+    <string name="json_stories_feed_url_key">feedUrl</string>
+    <string name="json_stories_feed_title_key">title</string>
+    <string name="json_stories_feed_author_key">author</string>
+    <string name="json_stories_feed_entries_key">entries</string>
+    <string name="json_stories_feed_entry_media_groups_key">mediaGroups</string>
+    <string name="json_stories_feed_entry_contents_key">contents</string>
+    <string name="json_stories_feed_entry_image_url_key">url</string>
+    <string name="json_stories_feed_entry_title_key">title</string>
+    <string name="json_stories_feed_entry_link_key">link</string>
+    <string name="json_stories_feed_entry_author_key">author</string>
+    <string name="json_stories_feed_entry_published_date_key">publishedDate</string>
+
+    <!-- FAB -->
+    <string name="action_find_feed">Floating Action Button find feed</string>
+
+</resources>
