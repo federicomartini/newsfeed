@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import app.com.ttins.newsfeed.adapter.StoryAdapter;
 import app.com.ttins.newsfeed.json.Story;
 import app.com.ttins.newsfeed.receiver.StoryBroadcastReceiver;
+import app.com.ttins.newsfeed.utils.Utility;
 
 public class StoryListActivity extends AppCompatActivity implements StoryBroadcastReceiver.Listener {
 
@@ -60,7 +61,7 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
     @Override
     protected void onResume() {
         super.onResume();
-        enableReceiver();
+        Utility.enableReceiver(StoryListActivity.this, StoryBroadcastReceiver.class);
         updateStoriesList();
     }
 
@@ -103,7 +104,6 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
         if (getIntent().hasExtra(getString(R.string.INTENT_ACTION_STORY_LIST))) {
             storyIntentArgument = getIntent()
                     .getStringExtra(getString(R.string.INTENT_ACTION_STORY_LIST));
-            Log.d(LOG_TAG, "Story List: " + storyIntentArgument);
             HttpAsyncTask loadFeedAsyncTask = new HttpAsyncTask();
             loadFeedAsyncTask.execute(getString(R.string.http_load_feed_query_address), storyIntentArgument);
         }
@@ -160,23 +160,9 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
     }
 
     private void updateStoriesList() {
-        Log.d(LOG_TAG, "updateStoriesList");
         storyAdapter = new StoryAdapter(this, storyList);
         storyListView.setAdapter(storyAdapter);
         storyAdapter.notifyDataSetChanged();
-    }
-
-    public String readIt(InputStream stream) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        BufferedReader responseReader = new BufferedReader(new InputStreamReader(stream));
-        String line = responseReader.readLine();
-
-        while (line != null){
-            builder.append(line);
-            line = responseReader.readLine();
-        }
-
-        return builder.toString();
     }
 
     private void httpRequest(String address, String query) throws IOException {
@@ -198,7 +184,7 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
             switch (response) {
                 case HttpURLConnection.HTTP_OK:
                     inputStream = httpURLConnection.getInputStream();
-                    String stringResponse = readIt(inputStream);
+                    String stringResponse = Utility.readIt(inputStream);
                     parseJsonStories(stringResponse);
                     break;
                 case HttpURLConnection.HTTP_NOT_FOUND:
@@ -249,7 +235,7 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
     protected void onPause() {
         super.onPause();
         unregisterAlarmBroadcast();
-        disableReceiver();
+        Utility.disableReceiver(StoryListActivity.this, StoryBroadcastReceiver.class);
     }
 
     @Override
@@ -268,25 +254,10 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
 
     @Override
     public void onFetchStory() {
-        Log.d(LOG_TAG, "onFetchStory");
         String[] params = {getResources().getString(R.string.http_load_feed_query_address),
                 storyIntentArgument};
         HttpAsyncTask loadStoryAsyncTask = new HttpAsyncTask();
         loadStoryAsyncTask.execute(params);
-    }
-
-    private void enableReceiver() {
-        PackageManager pm  = StoryListActivity.this.getPackageManager();
-        ComponentName componentName = new ComponentName(this, StoryBroadcastReceiver.class);
-        pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);
-    }
-
-    private void disableReceiver() {
-        PackageManager pm  = StoryListActivity.this.getPackageManager();
-        ComponentName componentName = new ComponentName(this, StoryBroadcastReceiver.class);
-        pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP);
     }
 
 }

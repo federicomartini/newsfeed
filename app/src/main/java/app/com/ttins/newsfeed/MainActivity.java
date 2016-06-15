@@ -39,6 +39,7 @@ import java.util.Date;
 import app.com.ttins.newsfeed.adapter.FeedAdapter;
 import app.com.ttins.newsfeed.json.Feed;
 import app.com.ttins.newsfeed.receiver.FeedBroadcastReceiver;
+import app.com.ttins.newsfeed.utils.Utility;
 
 
 public class MainActivity extends AppCompatActivity implements FeedAdapter.Listener,
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
     protected void onResume() {
         super.onResume();
         registerFeedReceiver();
-        enableReceiver();
+        Utility.enableReceiver(MainActivity.this, FeedBroadcastReceiver.class);
         sendBroadcast(intentFeed);
     }
 
@@ -192,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
             switch (response) {
                 case HttpURLConnection.HTTP_OK:
                     inputStream = httpURLConnection.getInputStream();
-                    String stringResponse = readIt(inputStream);
+                    String stringResponse = Utility.readIt(inputStream);
                     parseJsonFeed(stringResponse);
                     break;
                 case HttpURLConnection.HTTP_NOT_FOUND:
@@ -246,19 +247,6 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
         }
     }
 
-    public String readIt(InputStream stream) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        BufferedReader responseReader = new BufferedReader(new InputStreamReader(stream));
-        String line = responseReader.readLine();
-
-        while (line != null){
-            builder.append(line);
-            line = responseReader.readLine();
-        }
-
-        return builder.toString();
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -269,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mReceiver);
-        disableReceiver();
+        Utility.disableReceiver(MainActivity.this, FeedBroadcastReceiver.class);
     }
 
     @Override
@@ -280,25 +268,10 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
     }
 
     public void onFetchFeed() {
-        Log.d(LOG_TAG, "onFetchFeed");
         String[] params = {getResources().getString(R.string.http_find_feed_query_address),
                 getString(R.string.news_topic_query)};
         HttpAsyncTask loadNewsAsyncTask = new HttpAsyncTask();
         loadNewsAsyncTask.execute(params);
-    }
-
-    private void enableReceiver() {
-        PackageManager pm  = MainActivity.this.getPackageManager();
-        ComponentName componentName = new ComponentName(this, FeedBroadcastReceiver.class);
-        pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);
-    }
-
-    private void disableReceiver() {
-        PackageManager pm  = MainActivity.this.getPackageManager();
-        ComponentName componentName = new ComponentName(this, FeedBroadcastReceiver.class);
-        pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP);
     }
 
 }
