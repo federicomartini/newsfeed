@@ -1,8 +1,16 @@
 package app.com.ttins.newsfeed;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -27,8 +35,9 @@ import java.util.ArrayList;
 
 import app.com.ttins.newsfeed.adapter.StoryAdapter;
 import app.com.ttins.newsfeed.json.Story;
+import app.com.ttins.newsfeed.receiver.StoryBroadcastReceiver;
 
-public class StoryListActivity extends AppCompatActivity {
+public class StoryListActivity extends AppCompatActivity implements StoryBroadcastReceiver.Listener {
 
     private static final String LOG_TAG = StoryListActivity.class.getSimpleName();
 
@@ -39,10 +48,38 @@ public class StoryListActivity extends AppCompatActivity {
     String storyIntentArgument;
     ArrayList<Story> storyList = new ArrayList<>();
     StoryAdapter storyAdapter;
+    StoryBroadcastReceiver mReceiver;
+    Intent intentStory;
+    PendingIntent pendingIntent;
+    AlarmManager alarmManager;
+    IntentFilter intentFilter;
 
     @Override
     protected void onResume() {
         super.onResume();
+        enableReceiver();
+    }
+
+    public void onSetAlarm()
+    {
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                1000,
+                pendingIntent);
+    }
+
+    private void registerAlarmBroadcast()
+    {
+        intentStory = new Intent(this, StoryBroadcastReceiver.class);
+        intentStory.setAction(getString(R.string.receiver_action_update_story));
+        pendingIntent = PendingIntent
+                .getBroadcast(this, 0, intentStory, PendingIntent.FLAG_CANCEL_CURRENT);
+        alarmManager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE));
+    }
+
+    private void unregisterAlarmBroadcast()
+    {
+        alarmManager.cancel(pendingIntent);
     }
 
     @Override
@@ -50,6 +87,9 @@ public class StoryListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.story_list_activity_layout);
 
+        intentFilter = new IntentFilter(getString(R.string.receiver_action_update_story));
+        mReceiver = new StoryBroadcastReceiver();
+        mReceiver.setListener(this);
         storyListView = (ListView) findViewById(R.id.news_list_view_story_list_activity);
         emptyListTextView = (TextView) findViewById(R.id.news_empty_list_text_view_story_list_activity);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_story_list_activity);
@@ -75,6 +115,10 @@ public class StoryListActivity extends AppCompatActivity {
 
         collapsingToolbarLayout.setTitle(getString(R.string.app_name));
         storyListView.setEmptyView(emptyListTextView);
+
+        registerAlarmBroadcast();
+        onSetAlarm();
+
     }
 
     public class HttpAsyncTask extends AsyncTask<String, Void, Void> {
@@ -163,8 +207,15 @@ public class StoryListActivity extends AppCompatActivity {
 
             for(int i = 0; i < jEntryArray.length(); i++) {
                 Story story = new Story();
-                story.setTitle(jEntryArray.getJSONObject(i).getString(getString(R.string.json_stories_feed_entry_title_key)));
-                story.setLink(jEntryArray.getJSONObject(i).getString(getString(R.string.json_stories_feed_entry_link_key)));
+                story.setTitle(jEntryArray.getJSONObject(i)
+                        .getString(getString(R.string.json_stories_feed_entry_title_key)));
+                story.setLink(jEntryArray.getJSONObject(i)
+                        .getString(getString(R.string.json_stories_feed_entry_link_key)));
+                story.setPublishedDate(jEntryArray.getJSONObject(i)
+                        .getString(getString(R.string.json_stories_feed_entry_published_date_key))
+                        .substring(0, getResources().getInteger(R.integer.num_chars_published_date)));
+                story.setAuthor(jEntryArray.getJSONObject(i)
+                        .getString(getString(R.string.json_stories_feed_entry_author_key)));
                 storyList.add(story);
             }
 
@@ -172,12 +223,13 @@ public class StoryListActivity extends AppCompatActivity {
             Log.d(LOG_TAG, "JSONException");
             e.printStackTrace();
         }
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterAlarmBroadcast();
+        disableReceiver();
     }
 
     @Override
@@ -188,4 +240,28 @@ public class StoryListActivity extends AppCompatActivity {
     private void showShortToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onFetchStory() {
+        Log.d(LOG_TAG, "onFetchStory");
+        String[] params = {getResources().getString(R.string.http_load_feed_query_address),
+                storyIntentArgument};
+        HttpAsyncTask loadStoryAsyncTask = new HttpAsyncTask();
+        loadStoryAsyncTask.execute(params);
+    }
+
+    private void enableReceiver() {
+        PackageManager pm  = StoryListActivity.this.getPackageManager();
+        ComponentName componentName = new ComponentName(this, StoryBroadcastReceiver.class);
+        pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
+    }
+
+    private void disableReceiver() {
+        PackageManager pm  = StoryListActivity.this.getPackageManager();
+        ComponentName componentName = new ComponentName(this, StoryBroadcastReceiver.class);
+        pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
+    }
+
 }

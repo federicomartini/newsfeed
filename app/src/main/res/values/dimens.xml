@@ -9,6 +9,7 @@
 
     <!-- Story List -->
     <dimen name="story_list_item_height">80dp</dimen>
+    <integer name="num_chars_published_date">16</integer>
 
     <!-- AppBar Dimensions -->
     <dimen name="app_bar_height">150dp</dimen>

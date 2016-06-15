@@ -69,6 +69,7 @@ public class StoryAdapter extends ArrayAdapter<Story> {
             view = layoutInflater.inflate(R.layout.story_list_item_layout, null);
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.title = (TextView) view.findViewById(R.id.story_list_item_text_view_title);
+            viewHolder.author = (TextView) view.findViewById(R.id.story_list_item_text_view_author);
             viewHolder.publishedDate = (TextView) view.findViewById(R.id.story_list_item_text_view_publish_date);
             viewHolder.image = (ImageView) view.findViewById(R.id.story_list_item_image_view);
             view.setTag(viewHolder);
@@ -77,6 +78,8 @@ public class StoryAdapter extends ArrayAdapter<Story> {
         final ViewHolder viewHolder = (ViewHolder) view.getTag();
         viewHolder.title.setText(stories.get(position).getTitle());
         viewHolder.link = stories.get(position).getLink();
+        viewHolder.author.setText(stories.get(position).getAuthor());
+        viewHolder.publishedDate.setText(stories.get(position).getPublishedDate());
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +97,7 @@ public class StoryAdapter extends ArrayAdapter<Story> {
     static class ViewHolder {
         public TextView title;
         public TextView publishedDate;
+        public TextView author;
         public ImageView image;
         public String link;
     }

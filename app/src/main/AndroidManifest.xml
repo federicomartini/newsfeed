@@ -25,6 +25,20 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name=".receiver.FeedBroadcastReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="@string/receiver_action_update_feed"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receiver.StoryBroadcastReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="@string/receiver_action_update_story"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

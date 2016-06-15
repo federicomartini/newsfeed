@@ -48,4 +48,8 @@
     <!-- FAB -->
     <string name="action_find_feed">Floating Action Button find feed</string>
 
+    <!-- Receiver -->
+    <string name="receiver_action_update_feed">app.com.ttins.newsfeed.UPDATE_FEED</string>
+    <string name="receiver_action_update_story">app.com.ttins.newsfeed.UPDATE_STORY</string>
+
 </resources>
