@@ -9,28 +9,23 @@
 
     <TextView
         android:id="@+id/story_list_item_text_view_title"
+        style="@style/newsItemTitleBase"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Title"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="top|start"/>
 
     <TextView
         android:id="@+id/story_list_item_text_view_publish_date"
+        style="@style/newsItemPublishedDateBase"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Publish Date"
         android:layout_gravity="bottom|end"/>
 
     <TextView
         android:id="@+id/story_list_item_text_view_author"
+        style="@style/newsItemAuthorsBase"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Author"
         android:layout_gravity="start|bottom"/>
-
-    <ImageView
-        android:id="@+id/story_list_item_image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
 </FrameLayout>

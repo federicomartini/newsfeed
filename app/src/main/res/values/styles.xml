@@ -11,19 +11,38 @@
     </style>
 
     <style name="TextBase">
-        <item name="android:layout_margin">@dimen/news_title_item_margin</item>
         <item name="android:ellipsize">end</item>
     </style>
 
     <style name="newsItemTitleBase" parent="TextBase">
         <item name="color">@color/colorPrimaryText</item>
+        <item name="android:layout_marginStart">@dimen/news_title_item_horizontal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/news_title_item_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/news_title_item_vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/news_title_item_vertical_margin</item>
         <item name="android:textSize">@dimen/news_title_item_text_size</item>
         <item name="android:singleLine">true</item>
     </style>
 
     <style name="newsItemAuthorsBase" parent="TextBase">
         <item name="color">@color/colorSecondaryText</item>
+        <item name="android:layout_marginStart">@dimen/news_authors_item_horizontal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/news_authors_item_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/news_authors_item_vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/news_authors_item_vertical_margin</item>
         <item name="android:textSize">@dimen/news_authors_item_text_size</item>
+        <item name="android:maxLength">@integer/news_authors_item_max_length</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="newsItemPublishedDateBase" parent="TextBase">
+        <item name="color">@color/colorSecondaryText</item>
+        <item name="android:layout_marginStart">@dimen/news_published_date_horizontal_item_margin</item>
+        <item name="android:layout_marginEnd">@dimen/news_published_date_horizontal_item_margin</item>
+        <item name="android:layout_marginTop">@dimen/news_published_date_vertical_item_margin</item>
+        <item name="android:layout_marginBottom">@dimen/news_published_date_vertical_item_margin</item>
+        <item name="android:textSize">@dimen/news_published_date_item_text_size</item>
+        <item name="android:maxLength">@integer/news_published_date_item_max_length</item>
         <item name="android:singleLine">true</item>
     </style>
 

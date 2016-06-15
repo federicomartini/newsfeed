@@ -71,7 +71,6 @@ public class StoryAdapter extends ArrayAdapter<Story> {
             viewHolder.title = (TextView) view.findViewById(R.id.story_list_item_text_view_title);
             viewHolder.author = (TextView) view.findViewById(R.id.story_list_item_text_view_author);
             viewHolder.publishedDate = (TextView) view.findViewById(R.id.story_list_item_text_view_publish_date);
-            viewHolder.image = (ImageView) view.findViewById(R.id.story_list_item_image_view);
             view.setTag(viewHolder);
         }
 
