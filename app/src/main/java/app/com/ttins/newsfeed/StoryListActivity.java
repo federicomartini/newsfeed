@@ -13,9 +13,11 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +46,7 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
     ListView storyListView;
     TextView emptyListTextView;
     CollapsingToolbarLayout collapsingToolbarLayout;
+    FloatingActionButton fab;
     Toolbar toolbar;
     String storyIntentArgument;
     ArrayList<Story> storyList = new ArrayList<>();
@@ -58,13 +61,14 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
     protected void onResume() {
         super.onResume();
         enableReceiver();
+        updateStoriesList();
     }
 
     public void onSetAlarm()
     {
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(),
-                1000,
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                0,
+                AlarmManager.INTERVAL_HALF_HOUR,
                 pendingIntent);
     }
 
@@ -94,6 +98,7 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
         emptyListTextView = (TextView) findViewById(R.id.news_empty_list_text_view_story_list_activity);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_story_list_activity);
         toolbar = (Toolbar) findViewById(R.id.toolbar_story_list_activity);
+        fab = (FloatingActionButton) findViewById(R.id.story_refresh_fab);
 
         if (getIntent().hasExtra(getString(R.string.INTENT_ACTION_STORY_LIST))) {
             storyIntentArgument = getIntent()
@@ -106,6 +111,21 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             storyListView.setNestedScrollingEnabled(true);
         }
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (storyIntentArgument != null) {
+                    String[] params = {getResources().getString(R.string.http_load_feed_query_address),
+                            storyIntentArgument};
+                    HttpAsyncTask loadNewsAsyncTask = new HttpAsyncTask();
+                    loadNewsAsyncTask.execute(params);
+                    showShortToast(getString(R.string.updating_list));
+                } else {
+                    showShortToast(getString(R.string.http_generic_error_message));
+                }
+            }
+        });
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -127,7 +147,7 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
             try {
                 httpRequest(params[0], params[1]);
             } catch (IOException e) {
-                Log.d(LOG_TAG, "Error on Http Request");
+                showShortToast(getString(R.string.http_generic_error_message));
             }
             return null;
         }
@@ -237,8 +257,13 @@ public class StoryListActivity extends AppCompatActivity implements StoryBroadca
         super.onDestroy();
     }
 
-    private void showShortToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    private void showShortToast(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

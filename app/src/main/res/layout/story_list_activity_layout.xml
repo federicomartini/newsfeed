@@ -42,4 +42,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/story_refresh_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_refresh_white_48dp"
+        android:tint="@color/colorTextIcons"
+        app:fabSize="normal"
+        app:backgroundTint="@color/colorAccent"
+        app:elevation="@dimen/fab_elevation"
+        app:pressedTranslationZ="@dimen/fab_press_translation_z"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:contentDescription="@string/action_find_feed" />
+
 </android.support.design.widget.CoordinatorLayout>

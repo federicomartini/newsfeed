@@ -62,9 +62,9 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
 
     public void onSetAlarm()
     {
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(),
-                1000,
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                0,
+                AlarmManager.INTERVAL_HALF_HOUR,
                 pendingIntent);
     }
 
@@ -100,6 +100,9 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
         collapsingToolbarLayout.setTitle(getString(R.string.app_name));
         feedListView.setEmptyView(emptyListTextView);
 
+        registerAlarmBroadcast();
+        onSetAlarm();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             feedListView.setNestedScrollingEnabled(true);
         }
@@ -111,11 +114,26 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
                         getString(R.string.news_topic_query)};
                 HttpAsyncTask loadNewsAsyncTask = new HttpAsyncTask();
                 loadNewsAsyncTask.execute(params);
+                showShortToast(getString(R.string.updating_list));
             }
         });
 
-        registerAlarmBroadcast();
-        onSetAlarm();
+        if (savedInstanceState != null &&
+                savedInstanceState.containsKey(getString(R.string.feed_list_save_instance_key))) {
+
+            feedList = savedInstanceState
+                    .getParcelableArrayList(getString(R.string.feed_list_save_instance_key));
+            updateFeedList();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putParcelableArrayList(getString(R.string.feed_list_save_instance_key),
+                                                    feedList);
+
     }
 
     private void registerFeedReceiver() {
@@ -127,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
         super.onResume();
         registerFeedReceiver();
         enableReceiver();
-        //sendBroadcast(intentFeed);
+        sendBroadcast(intentFeed);
     }
 
     public class HttpAsyncTask extends AsyncTask<String, Void, Void> {
@@ -136,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
             try {
                 httpRequest(params[0], params[1]);
             } catch (IOException e) {
-                Log.d(LOG_TAG, "Error on Http Request");
+                showShortToast(getString(R.string.http_generic_error_message));
             }
             return null;
         }
@@ -192,10 +210,14 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.Liste
         }
     }
 
-    private void showShortToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    private void showShortToast(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-
 
     public void parseJsonFeed(String stringFromInputStream) {
         try {

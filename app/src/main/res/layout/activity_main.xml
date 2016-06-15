@@ -48,7 +48,7 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_rotate"
+        android:src="@drawable/ic_refresh_white_48dp"
         android:tint="@color/colorTextIcons"
         app:fabSize="normal"
         app:backgroundTint="@color/colorAccent"
